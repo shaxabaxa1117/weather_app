@@ -29,13 +29,17 @@ class HomePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   children: const <Widget>[
                     SizedBox(
-                      height: 48,
+                      height: 60,
                     ),
                     HomePageHeader(),
                     SizedBox(
                       height: 50,
                     ),
                     HomePageFirstBody(),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    HomePageSecondBody()
                   ],
                 ),
               )
@@ -64,7 +68,7 @@ class HomePageHeader extends StatelessWidget {
         ),
         Text(
           'Update 6/7/2024 4:55 PM',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white,fontSize: 16),
         )
       ],
     );
@@ -80,13 +84,13 @@ class HomePageFirstBody extends StatelessWidget {
       children: [
         Image(
           image: AssetImage('assets/icons/sun.png'),
-          height: 60,
-          width: 60,
+          height: 95,
+          width: 95,
         ),
         Text(
           'Clear',
           style: TextStyle(
-              color: Colors.white, fontSize: 35, fontWeight: FontWeight.bold),
+              color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),
         ),
         NumCel()
       ],
@@ -99,28 +103,98 @@ class NumCel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       margin: EdgeInsets.only(left: 25),
-      height:120,
-      width: 130,
+      height: 120,
+      width: 140,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            
             child: Text(
               '40',
-              style: TextStyle(fontSize: 75,color: Colors.white),
+              style: TextStyle(fontSize: 80, color: Colors.white),
             ),
           ),
           Container(
             margin: EdgeInsets.only(top: 20),
-            
             child: Image(
               image: AssetImage('assets/icons/cel.png'),
               color: Colors.white,
-              height: 30,
-              width: 30,
+              height: 35,
+              width: 35,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class HomePageSecondBody extends StatelessWidget {
+  const HomePageSecondBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 80,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          ComponentOfSwcondBody(
+            name: 'Humidity',
+            icon: Icons.water_drop_outlined,
+            numDescription: '56%',
+          ),
+          ComponentOfSwcondBody(
+            name: 'Wind',
+            icon: Icons.air,
+            numDescription: '5.14km/h',
+          ),
+          ComponentOfSwcondBody(
+            name: 'feels like',
+            icon: Icons.thermostat_rounded,
+            numDescription: '28',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class ComponentOfSwcondBody extends StatelessWidget {
+  ComponentOfSwcondBody({
+    super.key,
+    required this.name,
+    required this.icon,
+    required this.numDescription,
+  });
+  String name;
+  IconData icon;
+  String numDescription;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Icon(
+            icon,
+            size: 30,
+            color: Colors.white,
+          ),
+          Text(
+            name.toUpperCase(),
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            numDescription,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
             ),
           )
         ],

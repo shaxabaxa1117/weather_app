@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
         noAppBar: false,
       ),
       child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Scaffold(
           body: MyAppContent(),
         ),
