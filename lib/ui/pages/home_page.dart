@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:weather_app/ui/widgets/blur_container.dart';
 import 'package:weather_app/ui/widgets/home_page_appbar.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -26,6 +28,7 @@ class HomePage extends StatelessWidget {
               const HomePageAppBar(),
               Expanded(
                 child: ListView(
+                  physics: NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   children: const <Widget>[
                     SizedBox(
@@ -36,10 +39,7 @@ class HomePage extends StatelessWidget {
                       height: 50,
                     ),
                     HomePageFirstBody(),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    HomePageSecondBody()
+                    HomePageOptions(),
                   ],
                 ),
               )
@@ -68,7 +68,7 @@ class HomePageHeader extends StatelessWidget {
         ),
         Text(
           'Update 6/7/2024 4:55 PM',
-          style: TextStyle(color: Colors.white,fontSize: 16),
+          style: TextStyle(color: Colors.white, fontSize: 16),
         )
       ],
     );
@@ -82,11 +82,6 @@ class HomePageFirstBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(
       children: [
-        Image(
-          image: AssetImage('assets/icons/sun.png'),
-          height: 95,
-          width: 95,
-        ),
         Text(
           'Clear',
           style: TextStyle(
@@ -199,6 +194,77 @@ class ComponentOfSwcondBody extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class HomePageOptions extends StatelessWidget {
+  const HomePageOptions({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    List<Map<String, dynamic>> data = [
+      {
+        'img': 'assets/icons/humidity.svg',
+        'title': 'Humidity',
+        'data': '56%',
+      },
+      {
+        'img': 'assets/icons/wind.svg',
+        'title': 'Humidity',
+        'data': '4.63',
+      },
+      {
+        'img': 'assets/icons/feels_like.svg',
+        'title': 'Humidity',
+        'data': '22',
+      }
+    ];
+    return BlurContainer(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: List.generate(data.length, (index) {
+          return HomePageOptionsItems(
+            imagePath: data[index]['img'],
+            optionName: data[index]['title'],
+            optionData: data[index]['data'],
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class HomePageOptionsItems extends StatelessWidget {
+  final String imagePath;
+  final String optionName;
+  final String optionData;
+  const HomePageOptionsItems(
+      {super.key,
+      required this.imagePath,
+      required this.optionName,
+      required this.optionData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        SvgPicture.asset(imagePath),
+        Text(
+          optionName.toUpperCase(),
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Text(optionData.toUpperCase(),
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),)
+      ],
     );
   }
 }
