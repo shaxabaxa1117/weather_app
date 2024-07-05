@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:weather_app/domain/model/weather_data.dart';
 import 'package:weather_app/ui/widgets/blur_container.dart';
 import 'package:weather_app/ui/widgets/home_page_appbar.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final WeatherData? weatherData;
+  const HomePage({super.key, required this.weatherData});
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +21,34 @@ class HomePage extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          children: <Widget>[
-            HomePageAppBar(),
-            SizedBox(height: 32),
-            HomePageHeader(),
-            SizedBox(height: 20),
-            HomePageBody(),
-            SizedBox(height: 60),
-            HomePageOptions(),
-            SizedBox(height: 20),
-            HomePageDailyData(),
-          ],
-        ),
+        child:  HomePageContent(current: weatherData?.current,),
       ),
+    );
+  }
+}
+
+class HomePageContent extends StatelessWidget {
+
+  final Current? current;
+  const HomePageContent({
+    super.key,
+    required this.current
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        HomePageAppBar(),
+        SizedBox(height: 32),
+        HomePageHeader(),
+        SizedBox(height: 20),
+        HomePageBody(currentTemp: current?.temp ?? 0.0,),
+        SizedBox(height: 60),
+        HomePageOptions(),
+        SizedBox(height: 20),
+        HomePageDailyData(),
+      ],
     );
   }
 }
@@ -65,24 +81,26 @@ class HomePageHeader extends StatelessWidget {
 }
 
 class HomePageBody extends StatelessWidget {
-  const HomePageBody({super.key});
+  final double currentTemp;
+  const HomePageBody({super.key, required this.currentTemp, });
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: <Widget>[
-        HomePageCurrentWeatherInfo(),
+        HomePageCurrentWeatherInfo(currentTemp: currentTemp,),
       ],
     );
   }
 }
 
 class HomePageCurrentWeatherInfo extends StatelessWidget {
-  const HomePageCurrentWeatherInfo({super.key});
+  final double currentTemp;
+  const HomePageCurrentWeatherInfo({super.key, required this.currentTemp});
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return  Column(
       children: <Widget>[
         Text(
           'Clear',
@@ -93,7 +111,7 @@ class HomePageCurrentWeatherInfo extends StatelessWidget {
           ),
         ),
         Text(
-          '24ºC',
+          '$currentTempºC'?? '0.0',
           style: TextStyle(
             fontSize: 86,
             color: Colors.white,
@@ -225,7 +243,9 @@ class HomePageDailyDataItem extends StatelessWidget {
             'assets/icons/weather.svg',
             width: 100,
             height: 50,
-          )
+          ),
+          Text('Wed 16'),
+          Text('Wed 16')
         ],
       ),
     );
