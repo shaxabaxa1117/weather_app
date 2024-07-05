@@ -1,13 +1,13 @@
-import 'dart:collection';
-
-import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
 import 'package:flutter/services.dart';
+import 'package:weather_app/domain/weather_provider/weather_provider.dart';
 import 'package:weather_app/ui/pages/home_page.dart';
+import 'package:provider/provider.dart';
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +17,10 @@ class MyApp extends StatelessWidget {
         systemNavBarStyle: FlexSystemNavBarStyle.transparent,
         noAppBar: false,
       ),
-      child: const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: MyAppContent(),
+      child: ChangeNotifierProvider<WeatherProvider>(
+        create: (context) => WeatherProvider(),
+        child: MaterialApp(
+          home: MyAppContent(),
         ),
       ),
     );
@@ -33,10 +33,10 @@ class MyAppContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlutterSplashScreen.fadeIn(
-      backgroundColor: const Color.fromARGB(132, 27, 147, 245),
+      backgroundColor: const Color.fromRGBO(8, 108, 180, 1),
       duration: const Duration(seconds: 3),
       childWidget: const SplashScreenContent(),
-      nextScreen: HomePage(),
+      nextScreen: const HomePage(),
     );
   }
 }
@@ -49,16 +49,20 @@ class SplashScreenContent extends StatelessWidget {
     return Center(
       child: RichText(
         text: const TextSpan(
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-            children: <TextSpan>[
-              TextSpan(
-                text: 'Weather',
-                style: TextStyle(
-                  color: Colors.yellow,
-                ),
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
+          children: <TextSpan>[
+            TextSpan(text: 'Weather'),
+            TextSpan(
+              text: 'App',
+              style: TextStyle(
+                color: Colors.yellow,
               ),
-              TextSpan(text: 'App')
-            ]),
+            ),
+          ],
+        ),
       ),
     );
   }

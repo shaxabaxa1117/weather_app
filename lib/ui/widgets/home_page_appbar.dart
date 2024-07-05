@@ -10,26 +10,27 @@ class HomePageAppBar extends StatelessWidget implements PreferredSizeWidget {
       surfaceTintColor: Colors.transparent,
       leadingWidth: 120,
       leading: TextButton.icon(
-        onPressed: () {},
-        icon: const Icon(
-          Icons.location_on,
-          size: 32,
-          color: Colors.white,
-        ),
+        onPressed: null,
         label: const Text(
           'Paris',
-          style: TextStyle(color: Colors.white, fontSize: 18),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+          ),
+        ),
+        icon: const Icon(
+          Icons.location_on,
+          color: Colors.white,
+          size: 32,
         ),
       ),
       actions: <Widget>[
         IconButton(
           onPressed: () {},
-          icon:const Icon(
-            Icons.menu,
-            size: 32,
-            color: Colors.white,
-          ),
-        )
+          iconSize: 32,
+          color: Colors.white,
+          icon: const Icon(Icons.menu),
+        ),
       ],
     );
   }

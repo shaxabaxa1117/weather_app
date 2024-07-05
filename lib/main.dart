@@ -1,9 +1,8 @@
-
-
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:weather_app/domain/api/api.dart';
 import 'package:weather_app/ui/app.dart';
 
-void main(){
-
-  runApp( MyApp());
+Future <void> main(List<String> args) async{
+  await Api.getCoords();
+  runApp(const MyApp());
 }
