@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/domain/model/weather_data.dart';
 
 class HomePageAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const HomePageAppBar({super.key});
-
+  final String? timezone;
+  const HomePageAppBar({super.key, required this.timezone, });
+  
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
-      leadingWidth: 120,
+      leadingWidth: 200,
       leading: TextButton.icon(
         onPressed: null,
-        label: const Text(
-          'Paris',
+        label:  Text(
+          timezone ?? 'Error',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,

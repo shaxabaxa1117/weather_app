@@ -27,20 +27,17 @@ abstract final class Api {
   }
 
   static Future<WeatherData?> getWeatherData() async {
-    try {
+    
       final Coords? coords = await getCoords();
 
       final http.Response response = await http.get(
         Uri.parse(
-            'https://api.openweathermap.org/data/2.5/onecall?lat=${coords!.lat}&lon=${coords!.lon}&exclude=hourly,minutely&appid=$_apiKey'),
+            'https://api.openweathermap.org/data/2.5/onecall?lat=${coords!.lat}&lon=${coords!.lon}&exclude=hourly,minutely&appid=$_apiKey&units=metric&lang=ru'),
       );
       final jsonData = await json.decode(response.body);
       WeatherData weatherData = WeatherData.fromJson(jsonData);
       return weatherData;
       
-    } catch (e) {
-      e;
-    }
-    return null;
+    
   }
 }

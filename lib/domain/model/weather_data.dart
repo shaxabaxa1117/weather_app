@@ -148,10 +148,10 @@ class Weather {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['id'] = this.id;
-    data['main'] = this.main;
-    data['description'] = this.description;
-    data['icon'] = this.icon;
+    data['id'] = id;
+    data['main'] = main;
+    data['description'] = description;
+    data['icon'] = icon;
     return data;
   }
 }
@@ -211,7 +211,7 @@ class Daily {
         : null;
     pressure = json['pressure'];
     humidity = json['humidity'];
-    dewPoint = json['dew_point'];
+    dewPoint = json['dew_point'] /1;
     windSpeed = json['wind_speed'];
     windDeg = json['wind_deg'];
     windGust = json['wind_gust'];
@@ -222,9 +222,9 @@ class Daily {
       });
     }
     clouds = json['clouds'];
-    pop = json['pop'];
+    pop = json['pop'] / 1;
     rain = json['rain'];
-    uvi = json['uvi'];
+    uvi = json['uvi'] / 1;
   }
 
   Map<String, dynamic> toJson() {
@@ -239,21 +239,21 @@ class Daily {
       data['temp'] =  temp!.toJson();
     }
     if (this.feelsLike != null) {
-      data['feels_like'] = this.feelsLike!.toJson();
+      data['feels_like'] = feelsLike!.toJson();
     }
-    data['pressure'] = this.pressure;
-    data['humidity'] = this.humidity;
-    data['dew_point'] = this.dewPoint;
-    data['wind_speed'] = this.windSpeed;
-    data['wind_deg'] = this.windDeg;
-    data['wind_gust'] = this.windGust;
-    if (this.weather != null) {
-      data['weather'] = this.weather!.map((v) => v.toJson()).toList();
+    data['pressure'] = pressure;
+    data['humidity'] = humidity;
+    data['dew_point'] = dewPoint;
+    data['wind_speed'] = windSpeed;
+    data['wind_deg'] = windDeg;
+    data['wind_gust'] = windGust;
+    if (weather != null) {
+      data['weather'] = weather!.map((v) => v.toJson()).toList();
     }
-    data['clouds'] = this.clouds;
-    data['pop'] = this.pop;
-    data['rain'] = this.rain;
-    data['uvi'] = this.uvi;
+    data['clouds'] = clouds;
+    data['pop'] = pop;
+    data['rain'] = rain;
+    data['uvi'] = uvi;
     return data;
   }
 }
@@ -270,21 +270,21 @@ class Temp {
 
   Temp.fromJson(Map<String, dynamic> json) {
     day = json['day'];
-    min = json['min'];
-    max = json['max'];
+    min = json['min'] / 1;
+    max = json['max'] / 1;
     night = json['night'];
-    eve = json['eve'];
+    eve = json['eve']/1;
     morn = json['morn'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['day'] = this.day;
-    data['min'] = this.min;
-    data['max'] = this.max;
-    data['night'] = this.night;
-    data['eve'] = this.eve;
-    data['morn'] = this.morn;
+    final Map<String, dynamic> data = {};
+    data['day'] = day;
+    data['min'] = min;
+    data['max'] = max;
+    data['night'] = night;
+    data['eve'] = eve;
+    data['morn'] = morn;
     return data;
   }
 }
@@ -299,17 +299,17 @@ class FeelsLike {
 
   FeelsLike.fromJson(Map<String, dynamic> json) {
     day = json['day'];
-    night = json['night'];
+    night = json['night'] / 1;
     eve = json['eve'];
     morn = json['morn'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['day'] = this.day;
-    data['night'] = this.night;
-    data['eve'] = this.eve;
-    data['morn'] = this.morn;
+    final Map<String, dynamic> data = {};
+    data['day'] = day;
+    data['night'] = night;
+    data['eve'] = eve;
+    data['morn'] = morn;
     return data;
   }
 }
