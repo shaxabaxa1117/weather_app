@@ -13,7 +13,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     final size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
@@ -37,7 +36,6 @@ class HomePage extends StatelessWidget {
 }
 
 class HomePageContent extends StatelessWidget {
-  
   final Current? current;
   final String? timezone;
   final int timezoneOffset;
@@ -47,9 +45,9 @@ class HomePageContent extends StatelessWidget {
     super.key,
     required this.current,
     required this.timezone,
-    required this.timezoneOffset, required this.dailyData,
+    required this.timezoneOffset,
+    required this.dailyData,
   });
-  
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +60,6 @@ class HomePageContent extends StatelessWidget {
         HomePageHeader(
           dt: current?.dt != null ? current!.dt! : 0,
           timezoneOffset: timezoneOffset,
-          
         ),
         SizedBox(height: 20),
         HomePageBody(
@@ -75,7 +72,9 @@ class HomePageContent extends StatelessWidget {
           windSpeed: current?.windSpeed ?? 0.0,
         ),
         SizedBox(height: 20),
-        HomePageDailyData(dailyData: dailyData,),
+        HomePageDailyData(
+          dailyData: dailyData,
+        ),
       ],
     );
   }
@@ -84,7 +83,7 @@ class HomePageContent extends StatelessWidget {
 class HomePageHeader extends StatelessWidget {
   final int dt;
   final int timezoneOffset;
-  
+
   const HomePageHeader({
     super.key,
     required this.dt,
@@ -98,30 +97,31 @@ class HomePageHeader extends StatelessWidget {
       final String result = type == 'date'
           ? DateFormat('dd/MM/yyyy').format(
               DateTime.fromMillisecondsSinceEpoch(
-                
                 dt * 1000,
-                
               ),
             )
           : type == 'time'
               ? DateFormat('HH:mm').format(
                   DateTime.fromMillisecondsSinceEpoch(
-                    
                     (dt * 1000),
                   ),
                 )
-              : type == 'month' ? DateFormat.MMMM('ru').format(DateTime.fromMillisecondsSinceEpoch((dt * 1000))) : type == 'day' ?
-              DateFormat.d('ru').format(DateTime.fromMillisecondsSinceEpoch((dt * 1000))) : 'error';
-            
-            return result;
+              : type == 'month'
+                  ? DateFormat.MMMM('ru')
+                      .format(DateTime.fromMillisecondsSinceEpoch((dt * 1000)))
+                  : type == 'day'
+                      ? DateFormat.d('ru').format(
+                          DateTime.fromMillisecondsSinceEpoch((dt * 1000)))
+                      : 'error';
+
+      return result;
     }
-    
 
     return Column(
       children: [
         Text(
           ' ${timeStamp('month').capitalize} ${timeStamp('day')}',
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 40,
             color: Colors.white,
             fontWeight: FontWeight.w500,
@@ -130,7 +130,7 @@ class HomePageHeader extends StatelessWidget {
         SizedBox(height: 8),
         Text(
           'Обнавлено ${timeStamp('date')} ${timeStamp('time')}',
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
           ),
         ),
@@ -173,7 +173,7 @@ class HomePageCurrentWeatherInfo extends StatelessWidget {
       children: <Widget>[
         Text(
           description.capitalize,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 40,
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -181,7 +181,7 @@ class HomePageCurrentWeatherInfo extends StatelessWidget {
         ),
         Text(
           '${currentTemp.round()}ºC' ?? '0.0',
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 86,
             color: Colors.white,
             fontWeight: FontWeight.w500,
@@ -284,7 +284,10 @@ class HomePageOptionsItem extends StatelessWidget {
 
 class HomePageDailyData extends StatelessWidget {
   final List<Daily>? dailyData;
-  const HomePageDailyData({super.key, required this.dailyData,});
+  const HomePageDailyData({
+    super.key,
+    required this.dailyData,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -297,7 +300,12 @@ class HomePageDailyData extends StatelessWidget {
           child: ListView.separated(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) =>  HomePageDailyDataItem(item: dailyData?[index],),
+            itemBuilder: (context, index) => HomePageDailyDataItem(
+              item: dailyData?[index],
+              temp: dailyData?[index].temp?.day,
+              speed: dailyData?[index].windSpeed,
+              dt: dailyData?[index].dt,
+            ),
             separatorBuilder: (context, index) => const SizedBox(width: 16),
             itemCount: dailyData?.length ?? 0,
           ),
@@ -308,16 +316,38 @@ class HomePageDailyData extends StatelessWidget {
 }
 
 class HomePageDailyDataItem extends StatelessWidget {
-  const HomePageDailyDataItem({super.key,required this.item});
- final Daily? item;
+  const HomePageDailyDataItem({
+    super.key,
+    required this.item,
+    required this.temp,
+    required this.speed,
+    required this.dt,
+  });
+  final Daily? item;
+  final double? temp;
+  final double? speed;
+  final int? dt;
+
   @override
   Widget build(BuildContext context) {
+    String timeStamp(String type) {
+      String result = type == 'day'
+          ? DateFormat.d('ru')
+              .format(DateTime.fromMillisecondsSinceEpoch((dt! * 1000)))
+          : type == 'dayName'
+              ? DateFormat.E('ru')
+                  .format(DateTime.fromMillisecondsSinceEpoch((dt! * 1000)))
+              : 'error';
+
+      return result;
+    }
+
     return SizedBox(
       child: Column(
         children: <Widget>[
-          const Text(
-            'Wed 16',
-            style: TextStyle(
+          Text(
+            '${timeStamp('dayName').capitalize} ${timeStamp('day')}',
+            style: const TextStyle(
               fontSize: 14,
               color: Colors.white,
             ),
@@ -327,8 +357,20 @@ class HomePageDailyDataItem extends StatelessWidget {
             width: 100,
             height: 50,
           ),
-          Text('Wed 16'),
-          Text('Wed 16')
+          Text(
+            temp.toString(),
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            '${speed.toString()} km/h',
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+            ),
+          )
         ],
       ),
     );
