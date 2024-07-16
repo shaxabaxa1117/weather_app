@@ -365,7 +365,7 @@ class HomePageDailyDataItem extends StatelessWidget {
             ),
           ),
           Text(
-            '${speed.toString()} km/h',
+            '${speed?.round().toString()} km/h',
             style: const TextStyle(
               fontSize: 14,
               color: Colors.white,

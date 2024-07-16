@@ -1,22 +1,21 @@
 import 'package:flutter/widgets.dart';
 
-class WeatherData extends ChangeNotifier{
+class WeatherData extends ChangeNotifier {
   double? lat;
   double? lon;
   String? timezone;
   int? timezoneOffset;
   Current? current;
   List<Daily>? daily;
-  
 
-  WeatherData(
-      {this.lat,
-      this.lon,
-      this.timezone,
-      this.timezoneOffset,
-      this.current,
-      this.daily,
-      });
+  WeatherData({
+    this.lat,
+    this.lon,
+    this.timezone,
+    this.timezoneOffset,
+    this.current,
+    this.daily,
+  });
 
   WeatherData.fromJson(Map<String, dynamic> json) {
     lat = json['lat'];
@@ -31,12 +30,11 @@ class WeatherData extends ChangeNotifier{
         daily!.add(Daily.fromJson(v));
       });
     }
-
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['lat'] =lat;
+    data['lat'] = lat;
     data['lon'] = lon;
     data['timezone'] = timezone;
     data['timezone_offset'] = timezoneOffset;
@@ -46,7 +44,7 @@ class WeatherData extends ChangeNotifier{
     if (this.daily != null) {
       data['daily'] = daily!.map((v) => v.toJson()).toList();
     }
-    
+
     return data;
   }
 }
@@ -207,18 +205,18 @@ class Daily {
     moonPhase = json['moon_phase'];
     temp = json['temp'] != null ? Temp.fromJson(json['temp']) : null;
     feelsLike = json['feels_like'] != null
-        ?  FeelsLike.fromJson(json['feels_like'])
+        ? FeelsLike.fromJson(json['feels_like'])
         : null;
     pressure = json['pressure'];
     humidity = json['humidity'];
-    dewPoint = json['dew_point'] /1;
+    dewPoint = json['dew_point'] / 1;
     windSpeed = json['wind_speed'];
     windDeg = json['wind_deg'];
     windGust = json['wind_gust'];
     if (json['weather'] != null) {
       weather = <Weather>[];
       json['weather'].forEach((v) {
-        weather!.add( Weather.fromJson(v));
+        weather!.add(Weather.fromJson(v));
       });
     }
     clouds = json['clouds'];
@@ -228,15 +226,15 @@ class Daily {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  {};
-    data['dt'] =  dt;
-    data['sunrise'] =  sunrise;
+    final Map<String, dynamic> data = {};
+    data['dt'] = dt;
+    data['sunrise'] = sunrise;
     data['sunset'] = sunset;
-    data['moonrise'] =  moonrise;
-    data['moonset'] =  moonset;
-    data['moon_phase'] =  moonPhase;
-    if ( temp != null) {
-      data['temp'] =  temp!.toJson();
+    data['moonrise'] = moonrise;
+    data['moonset'] = moonset;
+    data['moon_phase'] = moonPhase;
+    if (temp != null) {
+      data['temp'] = temp!.toJson();
     }
     if (this.feelsLike != null) {
       data['feels_like'] = feelsLike!.toJson();
@@ -273,7 +271,7 @@ class Temp {
     min = json['min'] / 1;
     max = json['max'] / 1;
     night = json['night'];
-    eve = json['eve']/1;
+    eve = json['eve'] / 1;
     morn = json['morn'];
   }
 
@@ -298,7 +296,7 @@ class FeelsLike {
   FeelsLike({this.day, this.night, this.eve, this.morn});
 
   FeelsLike.fromJson(Map<String, dynamic> json) {
-    day = json['day'];
+    day = json['day'] / 1;
     night = json['night'] / 1;
     eve = json['eve'];
     morn = json['morn'];
@@ -313,4 +311,3 @@ class FeelsLike {
     return data;
   }
 }
-
