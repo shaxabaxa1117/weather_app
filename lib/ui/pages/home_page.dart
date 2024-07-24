@@ -1,15 +1,19 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:weather_app/domain/model/weather_data.dart';
+import 'package:provider/provider.dart';
+import 'package:weather_app/domain/models/weather_data.dart';
+import 'package:weather_app/domain/weather_provider/weather_provider.dart';
 import 'package:weather_app/ui/widgets/blur_container.dart';
-import 'package:weather_app/ui/widgets/home_page_appbar.dart';
+import 'package:weather_app/ui/widgets/home_page_app_bar.dart';
 
 class HomePage extends StatelessWidget {
   final WeatherData? weatherData;
-  const HomePage({super.key, required this.weatherData});
+  const HomePage({
+    super.key,
+    required this.weatherData,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,15 +24,15 @@ class HomePage extends StatelessWidget {
         height: size.height,
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/paris.png'),
+            image: AssetImage('assets/images/bg.jfif'),
             fit: BoxFit.cover,
           ),
         ),
         child: HomePageContent(
-          dailyData: weatherData?.daily,
           current: weatherData?.current,
-          timezone: weatherData?.timezone,
-          timezoneOffset: weatherData?.timezoneOffset ?? 0,
+          timeZone: weatherData?.timezone,
+          timeZoneOffset: weatherData?.timezoneOffset ?? 0,
+          dailyData: weatherData?.daily,
         ),
       ),
     );
@@ -37,15 +41,14 @@ class HomePage extends StatelessWidget {
 
 class HomePageContent extends StatelessWidget {
   final Current? current;
-  final String? timezone;
-  final int timezoneOffset;
+  final String? timeZone;
+  final int timeZoneOffset;
   final List<Daily>? dailyData;
-
   const HomePageContent({
     super.key,
     required this.current,
-    required this.timezone,
-    required this.timezoneOffset,
+    this.timeZone,
+    required this.timeZoneOffset,
     required this.dailyData,
   });
 
@@ -54,26 +57,36 @@ class HomePageContent extends StatelessWidget {
     return Column(
       children: <Widget>[
         HomePageAppBar(
-          timezone: timezone,
+          timeZone: timeZone,
         ),
-        SizedBox(height: 32),
-        HomePageHeader(
-          dt: current?.dt != null ? current!.dt! : 0,
-          timezoneOffset: timezoneOffset,
-        ),
-        SizedBox(height: 20),
-        HomePageBody(
-            currentTemp: current?.temp ?? 0.0,
-            description: current?.weather?[0].description ?? 'Error'),
-        SizedBox(height: 60),
-        HomePageOptions(
-          humidity: current?.humidity!.toDouble() ?? 0.0,
-          feelsLike: current?.feelsLike ?? 0.0,
-          windSpeed: current?.windSpeed ?? 0.0,
-        ),
-        SizedBox(height: 20),
-        HomePageDailyData(
-          dailyData: dailyData,
+        Expanded(
+          child: ListView(
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            children: <Widget>[
+              const SizedBox(height: 32),
+              HomePageHeader(
+                dt: current?.dt != null ? current!.dt! : 0,
+                timeZoneOffset: timeZoneOffset,
+                weatherId: current?.weather?[0].id ?? 0,
+              ),
+              const SizedBox(height: 20),
+              HomePageBody(
+                currentTemp: current?.temp ?? 0.0,
+                description: current?.weather?[0].description ?? 'Error',
+              ),
+              const SizedBox(height: 60),
+              HomePageOptions(
+                feelsLike: current?.feelsLike ?? 0.0,
+                windSpeed: current?.windSpeed ?? 0.0,
+                humidity: current?.humidity!.toDouble() ?? 0.0,
+              ),
+              const SizedBox(height: 20),
+              HomePageDailyData(
+                dailyData: dailyData,
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -82,54 +95,48 @@ class HomePageContent extends StatelessWidget {
 
 class HomePageHeader extends StatelessWidget {
   final int dt;
-  final int timezoneOffset;
-
+  final int timeZoneOffset;
+  final int weatherId;
   const HomePageHeader({
     super.key,
     required this.dt,
-    required this.timezoneOffset,
+    required this.timeZoneOffset,
+    required this.weatherId,
   });
 
   @override
   Widget build(BuildContext context) {
     String timeStamp(String type) {
-      print(dt);
       final String result = type == 'date'
-          ? DateFormat('dd/MM/yyyy').format(
-              DateTime.fromMillisecondsSinceEpoch(
-                dt * 1000,
-              ),
-            )
+          ? DateFormat('dd/MM/yyyy')
+              .format(DateTime.fromMillisecondsSinceEpoch(dt * 1000))
           : type == 'time'
-              ? DateFormat('HH:mm').format(
-                  DateTime.fromMillisecondsSinceEpoch(
-                    (dt * 1000),
-                  ),
-                )
-              : type == 'month'
-                  ? DateFormat.MMMM('ru')
-                      .format(DateTime.fromMillisecondsSinceEpoch((dt * 1000)))
-                  : type == 'day'
-                      ? DateFormat.d('ru').format(
-                          DateTime.fromMillisecondsSinceEpoch((dt * 1000)))
-                      : 'error';
+              ? DateFormat('HH:mm').format(DateTime.fromMillisecondsSinceEpoch(
+                  (dt + timeZoneOffset) * 1000))
+              : 'Error';
 
       return result;
     }
 
+    final WeatherProvider model = context.read<WeatherProvider>();
     return Column(
       children: [
-        Text(
-          ' ${timeStamp('month').capitalize} ${timeStamp('day')}',
-          style: const TextStyle(
+        const Text(
+          'June 07',
+          style: TextStyle(
             fontSize: 40,
             color: Colors.white,
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
+        SvgPicture.asset(
+          model.setIcon(weatherId),
+          width: 60,
+          height: 60,
+        ),
         Text(
-          'Обнавлено ${timeStamp('date')} ${timeStamp('time')}',
+          'Обновлено ${timeStamp('date')} ${timeStamp('time')} PM',
           style: const TextStyle(
             color: Colors.white,
           ),
@@ -164,8 +171,11 @@ class HomePageBody extends StatelessWidget {
 class HomePageCurrentWeatherInfo extends StatelessWidget {
   final double currentTemp;
   final String description;
-  const HomePageCurrentWeatherInfo(
-      {super.key, required this.currentTemp, required this.description});
+  const HomePageCurrentWeatherInfo({
+    super.key,
+    required this.currentTemp,
+    required this.description,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +190,7 @@ class HomePageCurrentWeatherInfo extends StatelessWidget {
           ),
         ),
         Text(
-          '${currentTemp.round()}ºC' ?? '0.0',
+          '${currentTemp.round()}ºC',
           style: const TextStyle(
             fontSize: 86,
             color: Colors.white,
@@ -193,14 +203,15 @@ class HomePageCurrentWeatherInfo extends StatelessWidget {
 }
 
 class HomePageOptions extends StatelessWidget {
-  final double? humidity;
-  final double? windSpeed;
-  final double? feelsLike;
-  const HomePageOptions(
-      {super.key,
-      required this.humidity,
-      required this.windSpeed,
-      required this.feelsLike});
+  final double humidity;
+  final double windSpeed;
+  final double feelsLike;
+  const HomePageOptions({
+    super.key,
+    required this.feelsLike,
+    required this.windSpeed,
+    required this.humidity,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -208,35 +219,32 @@ class HomePageOptions extends StatelessWidget {
       {
         'img': 'assets/icons/humidity.svg',
         'title': 'Влажность',
-        'data': '${humidity}%',
+        'data': '$humidity%',
       },
       {
         'img': 'assets/icons/wind.svg',
         'title': 'Скорость ветра',
-        'data': '${windSpeed} km/h',
+        'data': '$windSpeed km/h',
       },
       {
-        'img': 'assets/icons/feels_like.svg',
+        'img': 'assets/icons/feels-like.svg',
         'title': 'Ощущается',
-        'data': '${feelsLike?.round()} ºC',
+        'data': '${feelsLike.round()} ºC',
       },
     ];
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: BlurContainer(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(
-            data.length,
-            (index) {
-              return HomePageOptionsItem(
-                imagePath: data[index]['img'],
-                optionData: data[index]['data'],
-                optionName: data[index]['title'],
-              );
-            },
-          ),
+    return BlurContainer(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: List.generate(
+          data.length,
+          (index) {
+            return HomePageOptionsItem(
+              imagePath: data[index]['img'],
+              optionData: data[index]['data'],
+              optionName: data[index]['title'],
+            );
+          },
         ),
       ),
     );
@@ -291,24 +299,19 @@ class HomePageDailyData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: BlurContainer(
-        child: SizedBox(
-          height: 118,
-          width: double.infinity,
-          child: ListView.separated(
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) => HomePageDailyDataItem(
-              item: dailyData?[index],
-              temp: dailyData?[index].temp?.day,
-              speed: dailyData?[index].windSpeed,
-              dt: dailyData?[index].dt,
-            ),
-            separatorBuilder: (context, index) => const SizedBox(width: 16),
-            itemCount: dailyData?.length ?? 0,
+    return BlurContainer(
+      child: SizedBox(
+        height: 112,
+        child: ListView.separated(
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) => HomePageDailyDataItem(
+            item: dailyData?[index],
           ),
+          separatorBuilder: (context, index) => const SizedBox(
+            width: 16,
+          ),
+          itemCount: dailyData?.length ?? 0,
         ),
       ),
     );
@@ -316,61 +319,56 @@ class HomePageDailyData extends StatelessWidget {
 }
 
 class HomePageDailyDataItem extends StatelessWidget {
+  final Daily? item;
   const HomePageDailyDataItem({
     super.key,
     required this.item,
-    required this.temp,
-    required this.speed,
-    required this.dt,
   });
-  final Daily? item;
-  final double? temp;
-  final double? speed;
-  final int? dt;
 
   @override
   Widget build(BuildContext context) {
     String timeStamp(String type) {
-      String result = type == 'day'
-          ? DateFormat.d('ru')
-              .format(DateTime.fromMillisecondsSinceEpoch((dt! * 1000)))
-          : type == 'dayName'
-              ? DateFormat.E('ru')
-                  .format(DateTime.fromMillisecondsSinceEpoch((dt! * 1000)))
-              : 'error';
+      final String result = type == 'day'
+          ? DateFormat(
+              'MMMM',
+            ).format(
+              DateTime.fromMillisecondsSinceEpoch(item!.dt! * 1000),
+            )
+          : type == 'date'
+              ? DateFormat(
+                  'dd',
+                ).format(
+                  DateTime.fromMillisecondsSinceEpoch(item!.dt! * 1000),
+                )
+              : 'Error';
 
       return result;
     }
 
+    final WeatherProvider model = context.read<WeatherProvider>();
     return SizedBox(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
-            '${timeStamp('dayName').capitalize} ${timeStamp('day')}',
+            '${timeStamp('day')} ${timeStamp('date')}',
             style: const TextStyle(
               fontSize: 14,
               color: Colors.white,
             ),
           ),
           SvgPicture.asset(
-            'assets/icons/weather.svg',
-            width: 100,
-            height: 50,
+            model.setIcon(item!.weather![0].id!),
+            width: 40,
+            height: 40,
           ),
           Text(
-            temp.toString(),
+            '${item?.temp?.day?.round().toString()}ºC',
             style: const TextStyle(
               fontSize: 14,
               color: Colors.white,
             ),
           ),
-          Text(
-            '${speed?.round().toString()} km/h',
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.white,
-            ),
-          )
         ],
       ),
     );

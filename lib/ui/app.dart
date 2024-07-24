@@ -2,10 +2,9 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
 import 'package:flutter/services.dart';
-import 'package:weather_app/domain/model/weather_data.dart';
+import 'package:provider/provider.dart';
 import 'package:weather_app/domain/weather_provider/weather_provider.dart';
 import 'package:weather_app/ui/pages/home_page.dart';
-import 'package:provider/provider.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
       ),
       child: ChangeNotifierProvider<WeatherProvider>(
         create: (context) => WeatherProvider(),
-        child: MaterialApp(
+        child: const MaterialApp(
           home: MyAppContent(),
         ),
       ),
@@ -37,13 +36,20 @@ class MyAppContent extends StatelessWidget {
       backgroundColor: const Color.fromRGBO(8, 108, 180, 1),
       duration: const Duration(seconds: 3),
       childWidget: const SplashScreenContent(),
-      
       nextScreen: FutureBuilder(
         future: context.read<WeatherProvider>().setUp(),
-        builder: (context, snapshot){
-          return snapshot.connectionState == ConnectionState.done ?  HomePage( weatherData: snapshot.data,) : const Scaffold( body: Center(child: CircularProgressIndicator()),);
-        
-      },
+        builder: (context, snapshot) {
+          print(snapshot.data);
+          return snapshot.connectionState == ConnectionState.done
+              ? HomePage(
+                  weatherData: snapshot.data,
+                )
+              : const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+        },
       ),
     );
   }

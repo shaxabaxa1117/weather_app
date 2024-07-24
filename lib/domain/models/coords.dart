@@ -1,10 +1,11 @@
-import 'dart:convert';
-
 final class Coords {
   final double? lat;
   final double? lon;
 
-  const Coords({required this.lat, required this.lon});
+  const Coords({
+    required this.lat,
+    required this.lon,
+  });
 
   factory Coords.fromJson(List<dynamic> json) {
     return Coords(

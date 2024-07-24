@@ -1,6 +1,4 @@
-import 'package:flutter/widgets.dart';
-
-class WeatherData extends ChangeNotifier {
+class WeatherData {
   double? lat;
   double? lon;
   String? timezone;
@@ -38,10 +36,10 @@ class WeatherData extends ChangeNotifier {
     data['lon'] = lon;
     data['timezone'] = timezone;
     data['timezone_offset'] = timezoneOffset;
-    if (this.current != null) {
+    if (current != null) {
       data['current'] = current!.toJson();
     }
-    if (this.daily != null) {
+    if (daily != null) {
       data['daily'] = daily!.map((v) => v.toJson()).toList();
     }
 
@@ -101,7 +99,7 @@ class Current {
     if (json['weather'] != null) {
       weather = <Weather>[];
       json['weather'].forEach((v) {
-        weather!.add(new Weather.fromJson(v));
+        weather!.add(Weather.fromJson(v));
       });
     }
   }
@@ -209,7 +207,7 @@ class Daily {
         : null;
     pressure = json['pressure'];
     humidity = json['humidity'];
-    dewPoint = json['dew_point'] / 1;
+    dewPoint = json['dew_point'];
     windSpeed = json['wind_speed'];
     windDeg = json['wind_deg'];
     windGust = json['wind_gust'];
@@ -236,7 +234,7 @@ class Daily {
     if (temp != null) {
       data['temp'] = temp!.toJson();
     }
-    if (this.feelsLike != null) {
+    if (feelsLike != null) {
       data['feels_like'] = feelsLike!.toJson();
     }
     data['pressure'] = pressure;
@@ -298,8 +296,8 @@ class FeelsLike {
   FeelsLike.fromJson(Map<String, dynamic> json) {
     day = json['day'] / 1;
     night = json['night'] / 1;
-    eve = json['eve'];
-    morn = json['morn'];
+    eve = json['eve'] / 1;
+    morn = json['morn'] / 1;
   }
 
   Map<String, dynamic> toJson() {
